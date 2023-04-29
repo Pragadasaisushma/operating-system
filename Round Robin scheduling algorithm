@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_PROCESS 100
+#define QUANTUM 2
+
+struct Process {
+    int pid;
+    int arrival_time;
+    int burst_time;
+    int remaining_time;
+};
+
+int main() {
+    struct Process processes[MAX_PROCESS];
+    int n, total_burst_time = 0;
+    printf("Enter number of processes: ");
+    scanf("%d", &n);
+    for (int i = 0; i < n; i++) {
+        printf("Enter arrival time and burst time of process %d: ", i + 1);
+        scanf("%d %d", &processes[i].arrival_time, &processes[i].burst_time);
+        processes[i].pid = i + 1;
+        processes[i].remaining_time = processes[i].burst_time;
+        total_burst_time += processes[i].burst_time;
+    }
+
+    int time = 0, completed = 0;
+    while (completed < n) {
+        for (int i = 0; i < n; i++) {
+            if (processes[i].arrival_time <= time && processes[i].remaining_time > 0) {
+                if (processes[i].remaining_time <= QUANTUM) {
+                    time += processes[i].remaining_time;
+                    processes[i].remaining_time = 0;
+                    printf("Process %d completed at time %d\n", processes[i].pid, time);
+                    completed++;
+                } else {
+                    time += QUANTUM;
+                    processes[i].remaining_time -= QUANTUM;
+                    printf("Process %d executed for quantum at time %d\n", processes[i].pid, time);
+                }
+            }
+        }
+    }
+
+    float average_waiting_time = 0.0;
+    for (int i = 0; i < n; i++) {
+        int waiting_time = processes[i].burst
